@@ -15,7 +15,7 @@ export const NewButton = () => {
           </button>
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="p-0 bg-transparent border-none max-w-[480px]">
         <CreateOrganization />
       </DialogContent>
     </Dialog>
