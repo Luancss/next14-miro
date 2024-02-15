@@ -6,7 +6,7 @@ import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { OrganizationSwitcher } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Star } from "lucide-react";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -65,7 +65,22 @@ export const OrgSidebar = () => {
             Team boards
           </Link>
         </Button>
-
+        <Button
+          variant="ghost"
+          asChild
+          size="lg"
+          className="font-normal justify-start px-2 w-full"
+        >
+          <Link href={{
+            pathname: "/",
+            query: {
+              favorites: true
+            }
+          }}>
+            <Star className="h-4 w-4 mr-2"/>
+            Favorite boards
+          </Link>
+        </Button>
       </div>
     </div>
   )
