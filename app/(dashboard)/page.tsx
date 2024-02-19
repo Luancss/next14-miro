@@ -1,8 +1,20 @@
+"use client"
+import { useOrganization } from "@clerk/nextjs";
+import { EmptyOrg } from "./_components/empty-org";
 
 const DashboardPage = () => {
-  return (
-    <div>Dashboard Page</div>
-  )
-}
+  const { organization } = useOrganization();
 
-export default DashboardPage
+  return (
+    <div className="flex-1 h-[calc(100%-80px)] p-6">
+      {!organization ? (
+        <EmptyOrg/>
+      ): (
+          <p>Border list</p>
+      )}
+      
+    </div>
+  );
+};
+
+export default DashboardPage;
