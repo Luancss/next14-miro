@@ -2,7 +2,14 @@
 import { useOrganization } from "@clerk/nextjs";
 import { EmptyOrg } from "./_components/empty-org";
 
-const DashboardPage = () => {
+interface DashboardLayoutProps {
+  searchParams: {
+    search?: string;
+    favorites?: string;
+  };
+};
+
+const DashboardPage = ({ searchParams }: DashboardLayoutProps) => {
   const { organization } = useOrganization();
 
   return (
@@ -10,7 +17,10 @@ const DashboardPage = () => {
       {!organization ? (
         <EmptyOrg/>
       ): (
-          <p>Border list</p>
+         <BoardList
+          orgId={organization.id}
+          query={searchParams}
+         />
       )}
       
     </div>
