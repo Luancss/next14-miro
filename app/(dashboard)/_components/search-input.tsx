@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { ChangeEvent, useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 
-export const SeatchInput = () => {
+export const SearchInput = () => {
   const router = useRouter();
   const [value, setValue] = useState("");
   const denbouncedValue = useDebounce(value, 500);

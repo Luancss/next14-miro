@@ -1,16 +1,24 @@
 "use client";
 
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
-import { SeatchInput } from "./search-input";
+import { 
+  UserButton, 
+  OrganizationSwitcher, 
+  useOrganization
+} from "@clerk/nextjs";
+
+import { SearchInput } from "./search-input";
+import { InviteButton } from "./invite-button";
 
 export const Navbar = () => {
+  const { organization } = useOrganization();
+
   return (
-    <div className="flex items-center gap-x-4 p-">
+    <div className="flex items-center gap-x-4 p-5">
       <div className="hidden lg:flex lg:flex-1">
-        <SeatchInput/>
-        </div>
-        <div className="hidden lg:flex lg:flex-1">
-        <OrganizationSwitcher
+        <SearchInput />
+      </div>
+      <div className="block lg:hidden flex-1">
+      <OrganizationSwitcher
         hidePersonal
         appearance={{
           elements: {
@@ -28,11 +36,14 @@ export const Navbar = () => {
               border: "1px solid #E5E7EB",
               justifyContent: "space-between",
               backgroundColor: "white",
-            },
-          },
+            }
+          }
         }}
       />
-        </div>
+      </div>
+      {organization && (
+        <InviteButton />
+      )}
       <UserButton />
     </div>
   );
