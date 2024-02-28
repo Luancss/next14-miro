@@ -2,17 +2,17 @@ import { mutation } from "./_generated/server"
 import {v} from "convex/values";
 
 const images = [
-  "/placeholder/1.svg",
-  "/placeholder/2.svg",
-  "/placeholder/3.svg",
-  "/placeholder/4.svg",
-  "/placeholder/5.svg",
-  "/placeholder/6.svg",
-  "/placeholder/7.svg",
-  "/placeholder/8vg",
-  "/placeholder/9.svg",
-  "/placeholder/10.svg"
-]
+  "/placeholders/1.svg",
+  "/placeholders/2.svg",
+  "/placeholders/3.svg",
+  "/placeholders/4.svg",
+  "/placeholders/5.svg",
+  "/placeholders/6.svg",
+  "/placeholders/7.svg",
+  "/placeholders/8.svg",
+  "/placeholders/9.svg",
+  "/placeholders/10.svg",
+];
 
 export const create = mutation({
   args: {
@@ -26,15 +26,18 @@ export const create = mutation({
       throw new Error("Unauthorized");
     }
 
-    const ramdomImage = images[Math.floor(Math.random() * images.length)];
+    const randomImage = images[Math.floor(Math.random() * images.length)];
+
+
+    console.log(randomImage, "TEST")
 
     const board = await ctx.db.insert("boards", {
       title: args.title,
       orgId: args.orgId,
       authorId: identity.subject,
       authorName: identity.name!,
-      imageUrl: ramdomImage
-    })
+      imageUrl: randomImage,
+    });
 
     return board;
   }
