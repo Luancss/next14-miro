@@ -31,14 +31,14 @@ export const Footer = ({
         disabled={disabled}
         onClick={onClick}
         className={cn(
-          "absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-muted-foreground hover:text-blue-600",
+          "opacity-0 group-hover:opacity-100 transition absolute right-3 top-3 text-muted-foreground hover:text-blue-600",
           disabled && "cursor-not-allowed opacity-75" 
         )}
-      />
+      >
         <Star
-          className={cn("h-4 w-4", isFavorite && "text-blue-600")}
-
+          className={cn("h-4 w-4", isFavorite && "fill-blue-600 text-blue-600")}
         />
+        </button>
     </div>
   )
   }
