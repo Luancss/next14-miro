@@ -7,6 +7,8 @@ import { Overlay } from "./overlay";
 import { useAuth } from "@clerk/nextjs";
 import { Footer } from "./footer";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
 interface BoardCardProps {
   id: string;
   title: string;
@@ -41,16 +43,22 @@ export const BoardCard = ({
           <Overlay />
         </div>
         <Footer
-         isFavorite={isFavorite}
-         title={title}
-         authorLabel={authorLabel}
-         createdAtLabel={createdAtLabel}
-         onClick={() => {}}
-         disabled={false}
-          />
+          isFavorite={isFavorite}
+          title={title}
+          authorLabel={authorLabel}
+          createdAtLabel={createdAtLabel}
+          onClick={() => {}}
+          disabled={false}
+        />
       </div>
     </Link>
   );
 };
 
-export default BoardCard;
+BoardCard.Skeleton = () => {
+  return (
+    <div className="aspect-[100/127] rounded-lg overflow-hidden">
+      <Skeleton className="w-full h-full" />
+    </div>
+  );
+};
