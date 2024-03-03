@@ -9,7 +9,7 @@ import { MoreHorizontal } from "lucide-react";
 import { Footer } from "./footer";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Actions } from "../actions";
+import { Actions } from "../../../../components/actions";
 
 interface BoardCardProps {
   id: string;
