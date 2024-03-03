@@ -1,6 +1,14 @@
-"use client"
+"use client";
 
-import { DropdownMenuContentProps } from "@radix-ui/react-dropdown-menu"
+import { DropdownMenuContentProps } from "@radix-ui/react-dropdown-menu";
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 interface ActionProps {
   children: React.ReactNode;
@@ -18,8 +26,10 @@ export const Actions = ({
   title,
 }: ActionProps) => {
   return (
-    <div>
-    Actions!
-    </div>
-  )
-} 
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        {children}
+      </DropdownMenuTrigger>
+    </DropdownMenu>
+  );
+};
