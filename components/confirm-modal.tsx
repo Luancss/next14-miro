@@ -1,6 +1,7 @@
 "use client";
 
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import { DialogFooter, DialogHeader } from "./ui/dialog";
 
 interface ConfirmModalProps {
   children: React.ReactNode;
@@ -22,26 +23,29 @@ export const ConfirmModal = ({
   };
 
   return (
-    <AlertDialog.Root>
-  <AlertDialog.Trigger asChild>
-    {children}
-  </AlertDialog.Trigger>
-  <AlertDialog.Content>
-    <AlertDialog.Title>
-      {header}
-    </AlertDialog.Title>
-    <AlertDialog.Description>
-      {description}
-    </AlertDialog.Description>
-    <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-          <AlertDialog.Action
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        {children}
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <DialogHeader>
+          <AlertDialogTitle>
+            {header}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {description}
+          </AlertDialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
             disabled={disabled}
             onClick={handleConfirm}
           >
             Confirm
-          </AlertDialog.Action>
-    
-  </AlertDialog.Content>
-</AlertDialog.Root>
+          </AlertDialogAction>
+        </DialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
