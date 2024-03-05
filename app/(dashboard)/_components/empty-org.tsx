@@ -25,7 +25,6 @@ export const EmptyOrg = () => {
             <CreateOrganization />
           </DialogContent>
         </Dialog>
-
       </div>
     </div>
   );
