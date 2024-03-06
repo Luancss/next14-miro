@@ -7,10 +7,12 @@ import { useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { Actions } from "@/components/actions";
 import { cn } from "@/lib/utils";
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { useRenameModal } from "@/store/use-rename-modal";
+import { Menu } from "lucide-react";
 
 interface InfoProps {
   boardId: string;
@@ -63,6 +65,21 @@ export const Info = ({ boardId }: InfoProps) => {
           {data.title}
         </Button>
       </Hint>
+      <TabSeparator/>
+      <Actions
+          id={data._id}
+          title={data.title}
+          side="bottom"
+          sideOffset={10}
+      >
+        <div>
+          <Hint label="Main menu" side="bottom" sideOffset={10}>
+              <Button size="icon" variant="board">
+                <Menu/>
+              </Button>
+          </Hint>
+        </div>
+      </Actions>
     </div>
   );
 };
