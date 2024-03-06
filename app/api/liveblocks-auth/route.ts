@@ -23,24 +23,14 @@ export async function POST(request: Request) {
   const {room} = await request.json();
   const board = await convex.query(api.board.get, {id:room})
 
-  console.log("AUTH-INFO", {
-    room,
-    board,
-    boardOrgId: board?.orgId,
-    userOrgIfd: authorization.orgId
-  });
-  
-    
   if (board?.orgId !== authorization.orgId) {
-    return new Response("Unauthorized");
+    return new Response("Unauthorized", {status: 403});
   }
 
   const userInfo = {
     name : user.firstName || "Teammeate",
     picture: user.imageUrl
   };
-
-  console.log({userInfo});
   
   const session = liveblocks.prepareSession(
     user.id,
