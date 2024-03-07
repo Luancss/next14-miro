@@ -2,56 +2,86 @@ import {
   Circle,
   MousePointer,
   Pencil,
+  Redo2,
   Square,
   StickyNote,
-  Type
+  Type,
+  Undo2,
 } from "lucide-react";
 import { ToolButton } from "./tool-button";
 
-export const Toolbar = () => {
+import { CanvasMode, CanvasState } from "@/types/canvas";
+
+interface ToolbarProps {
+  canvasState: CanvasState;
+  setCanvasState: React.Dispatch<React.SetStateAction<CanvasState>>;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+}
+
+export const Toolbar = ({
+  canvasState,
+  setCanvasState,
+  undo,
+  redo,
+  canUndo,
+  canRedo,
+}: ToolbarProps) => {
   return (
     <div className="absolute top-[50%] -translate-y-[50%] left-2 flex flex-col gap-y-4">
-      <div className="bg-white rounded-md px-1.5 flex gap-y-1  flex-col items-center shadow-md">
+      <div className="bg-white rounded-md p-1.5 flex gap-y-1  flex-col items-center shadow-md">
         <ToolButton
-         label="Select"
+          label="Select"
           icon={MousePointer}
-          onClick={() => { }}
-          isActive={false}
-          />
-          <ToolButton
-         label="Text"
+          onClick={() => setCanvasState({ mode: CanvasMode.None })}
+          isActive={canvasState.mode === CanvasMode.None}
+        />
+        <ToolButton
+          label="Text"
           icon={Type}
-          onClick={() => { }}
+          onClick={() => {}}
           isActive={false}
-          />
-           <ToolButton
-         label="Sticky note"
+        />
+        <ToolButton
+          label="Sticky note"
           icon={StickyNote}
-          onClick={() => { }}
+          onClick={() => {}}
           isActive={false}
-          />
-           <ToolButton
-         label="Rectangle"
+        />
+        <ToolButton
+          label="Rectangle"
           icon={Square}
-          onClick={() => { }}
+          onClick={() => {}}
           isActive={false}
-          />
-          <ToolButton
-         label="Ellipse"
+        />
+        <ToolButton
+          label="Ellipse"
           icon={Circle}
-          onClick={() => { }}
+          onClick={() => {}}
           isActive={false}
-          />
-          <ToolButton
-         label="Pen"
+        />
+        <ToolButton
+          label="Pen"
           icon={Pencil}
-          onClick={() => { }}
+          onClick={() => {}}
           isActive={false}
-          />
+        />
       </div>
       <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md">
-        <div>Undo</div>
-        <div>Redo</div>
+        <ToolButton
+          label="Undo"
+          icon={Undo2}
+          onClick={undo}
+          isDisabled={!canUndo}
+        />
+        <ToolButton
+          label="Redo"
+          icon={Redo2}
+          onClick={redo}
+          isDisabled={!canRedo}
+        />
       </div>
     </div>
   );
