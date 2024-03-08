@@ -7,16 +7,19 @@ import { Camera, CanvasMode, CanvasState } from "@/types/canvas";
 import { Info } from "./info";
 import { Participants } from "./participants";
 import { Toolbar } from "./toolbar";
-import { useHistory, useCanUndo, useCanRedo, useMutation } from "@/liveblocks.config";
+import { useHistory, useCanUndo, useCanRedo, useMutation, useStorage } from "@/liveblocks.config";
 import { CursorsPresence } from "./cursors-presence";
 import { pointerEventToCanvasPoint } from "@/lib/utils";
 
+const MAX_LAYERS = 100; 
 
 interface CanvasProps {
   boardId: string;
 }
 
 export const Canvas = ({ boardId }: CanvasProps) => {
+  const layerIds = useStorage((root) => root.layersIds);
+
   const [canvasState, setCanvasState] = useState<CanvasState>({
     mode: CanvasMode.None,
   });
@@ -27,7 +30,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
   const canRedo = useCanRedo();
 
   const onWheel = useCallback((e: React.WheelEvent) => {
-  
   
       setCamera((camera) => ({
         x: camera.x - e.deltaX,
@@ -68,7 +70,11 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
       >
-        <g>
+        <g
+          style={{
+            transform: `translate(${camera.x}px, ${camera.y}px)`,
+          }}
+        >
           <CursorsPresence />
         </g>
       </svg>
