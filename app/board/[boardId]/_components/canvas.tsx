@@ -9,6 +9,7 @@ import { Participants } from "./participants";
 import { Toolbar } from "./toolbar";
 import { useHistory, useCanUndo, useCanRedo, useMutation } from "@/liveblocks.config";
 import { CursorsPresence } from "./cursors-presence";
+import { pointerEventToCanvasPoint } from "@/lib/utils";
 
 
 interface CanvasProps {
@@ -26,6 +27,8 @@ export const Canvas = ({ boardId }: CanvasProps) => {
   const canRedo = useCanRedo();
 
   const onWheel = useCallback((e: React.WheelEvent) => {
+  
+  
       setCamera((camera) => ({
         x: camera.x - e.deltaX,
         y: camera.y - e.deltaY,
@@ -35,14 +38,17 @@ export const Canvas = ({ boardId }: CanvasProps) => {
   const onPointerMove = useMutation(({setMyPresence}, e: React.PointerEvent) => {
     e.preventDefault();
 
-    const current = {
-      x: 0,
-      y: 0
-    }
+    const current = pointerEventToCanvasPoint(e, camera);
 
     setMyPresence({
       cursor: current
     })
+  }, [])
+
+  const onPointerLeave = useMutation(({setMyPresence}) => {
+    setMyPresence({
+      cursor: null
+    });
   }, [])
 
   return (
@@ -60,6 +66,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       <svg className="h-[100vh] w-[100vw]"
         onWheel={onWheel}
         onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
       >
         <g>
           <CursorsPresence />
