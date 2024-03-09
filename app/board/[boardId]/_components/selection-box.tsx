@@ -19,28 +19,51 @@ export const SelectionBox = memo(
 
     const isShowingHandles = useStorage(
       (root) =>
-        soleLayerId && root.layers.get(soleLayerId)?.type === LayerType.Path
+        soleLayerId && root.layers.get(soleLayerId)?.type !== LayerType.Path
     );
 
     const bounds = useSelectionBounds();
 
     if (!bounds) {
-      return null
+      return null;
     }
 
     return (
       <>
-      <rect
-        className="fill-transparen stroke-blue-500 stroke-1 pointer-events-none"
-        style={{
-          transform: `translate(${bounds.x}px, ${bounds.y}px)`,
-        }}
-        x={0}
-        y={0}
-        width={bounds.width}
-        height={bounds.height}
-      />
+        <rect
+          className="fill-transparent stroke-blue-500 stroke-1 pointer-events-none"
+          style={{
+            transform: `translate(${bounds.x}px, ${bounds.y}px)`,
+          }}
+          x={0}
+          y={0}
+          width={bounds.width}
+          height={bounds.height}
+        />
+        {isShowingHandles && (
+          <>
+            <rect
+              className="fill-white stroke-1 stroke-blue-500"
+              x={0}
+              y={0}
+              style={{
+                cursor: "nwse-resize",
+                width: `${HANDLE_WIDTH}px`,
+                height: `${HANDLE_WIDTH}px`,
+                transform: `
+                translate(
+                  ${bounds.x - HANDLE_WIDTH / 2}px,
+                  ${bounds.y - HANDLE_WIDTH / 2}px
+                )
+              `,
+              }}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
+            />
+          </>
+        )}
       </>
-    )
+    );
   }
 );
