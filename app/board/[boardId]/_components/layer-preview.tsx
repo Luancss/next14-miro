@@ -3,12 +3,13 @@
 import { useStorage } from "@/liveblocks.config";
 import { LayerType } from "@/types/canvas";
 import { memo } from "react";
+import { Rectangle } from "./rectangle";
 
 interface LayerPreviewProps {
   id: string;
-  onLayerPointerDown: () => void;
+  onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void;
   selectionColor?: string;
-}
+};
 
 export const LayerPreview = memo(({
   id,
@@ -17,6 +18,9 @@ export const LayerPreview = memo(({
 }: LayerPreviewProps) => {
   const layer = useStorage((root) => root.layers.get(id));
 
+  console.log(layer);
+  
+
   if (!layer) {
     return null;
   }
@@ -24,14 +28,17 @@ export const LayerPreview = memo(({
   switch (layer.type) {
     case LayerType.Rectangle:
       return (
-        <div>
-          Rectangle
-        </div>
-      );
+          <Rectangle
+            id={id}
+            layer={layer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
       default:
-        console.log("Unknow layer type");
-        return null ;
-  }
+        console.warn("Unknown layer type");
+        return null;
+    }
 });
 
 LayerPreview.displayName = "LayerPreview";
