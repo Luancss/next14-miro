@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import {
   Camera,
@@ -20,9 +20,10 @@ import {
   useCanRedo,
   useMutation,
   useStorage,
+  useOthersMapped,
 } from "@/liveblocks.config";
 import { CursorsPresence } from "./cursors-presence";
-import { pointerEventToCanvasPoint } from "@/lib/utils";
+import { connectionIdToColor, pointerEventToCanvasPoint } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
@@ -111,27 +112,37 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     });
   }, []);
 
-  const onPointerUp = useMutation((
-    {},
-    e
-  ) => {
-    const point = pointerEventToCanvasPoint(e, camera);
+  const onPointerUp = useMutation(
+    ({}, e) => {
+      const point = pointerEventToCanvasPoint(e, camera);
 
-    if (canvasState.mode === CanvasMode.Inserting) {
-      insertLayer(
-        canvasState.layerType, point
-      );
-    } else {
-      setCanvasState({ mode: CanvasMode.None });
+      if (canvasState.mode === CanvasMode.Inserting) {
+        insertLayer(canvasState.layerType, point);
+      } else {
+        setCanvasState({ mode: CanvasMode.None });
+      }
+
+      history.resume();
+    },
+    [camera, canvasState, history, insertLayer]
+  );
+
+  const selections = useOthersMapped((other) => other.presence.selection);
+
+
+  const layerIdsToColorSelection = useMemo(() => {
+    const layerIdsToColorSelection: Record<string, string> = {};
+
+    for (const user of selections) {
+      const [connectionId, selection] = user;
+
+      for (const layerId of selection) {
+        layerIdsToColorSelection[layerId] = connectionIdToColor(connectionId)
+      }
     }
 
-    history.resume();
-  }, [
-    camera,
-    canvasState,
-    history,
-    insertLayer
-  ]);
+    return layerIdsToColorSelection;
+  }, [selections]);
 
   return (
     <main className="w-full h-full relative bg-neutral-100 touch-none">
