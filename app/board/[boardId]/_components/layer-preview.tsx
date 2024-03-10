@@ -18,9 +18,6 @@ export const LayerPreview = memo(({
 }: LayerPreviewProps) => {
   const layer = useStorage((root) => root.layers.get(id));
 
-  console.log(layer);
-  
-
   if (!layer) {
     return null;
   }
