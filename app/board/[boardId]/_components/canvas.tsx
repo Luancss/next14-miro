@@ -9,6 +9,8 @@ import {
   Color,
   LayerType,
   Point,
+  Side,
+  XYWH,
 } from "@/types/canvas";
 
 import { Info } from "./info";
@@ -86,6 +88,18 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     },
     [lastUsedColor]
   );
+
+    const onResizeHandlePointerDown = useCallback((
+      corner: Side,
+      initialBounds: XYWH
+    ) => {
+      history.pause()
+      setCanvasState({
+        mode: CanvasMode.Resizing,
+        initialBounds,
+        corner
+      })
+    }, [history])
 
   const onWheel = useCallback((e: React.WheelEvent) => {
     setCamera((camera) => ({
@@ -199,7 +213,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
             />
           ))}
           <SelectionBox
-            onResizeHandlePointerDown={()=> {}}
+            onResizeHandlePointerDown={onResizeHandlePointerDown}
           />
           <CursorsPresence />
         </g>
