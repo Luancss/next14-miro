@@ -34,6 +34,7 @@ import { nanoid } from "nanoid";
 import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
+import { SelectionTools } from "./selection-tools";
 
 const MAX_LAYERS = 100;
 
@@ -121,13 +122,11 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     [canvasState]
   );
 
-    const unselectLayers = useMutation((
-      { self, setMyPresence },
-    ) => {
-      if (self.presence.selection.length > 0) {
-          setMyPresence({ selection: [] }, { addToHistory: true });
-      }
-    }, [])
+  const unselectLayers = useMutation(({ self, setMyPresence }) => {
+    if (self.presence.selection.length > 0) {
+      setMyPresence({ selection: [] }, { addToHistory: true });
+    }
+  }, []);
 
   const resizeSelectedLayer = useMutation(
     ({ storage, self }, point: Point) => {
@@ -284,6 +283,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         undo={history.undo}
         redo={history.redo}
       />
+      <SelectionTools camera={camera} setLastUsedColor={setLastUsedColor} />
       <svg
         className="h-[100vh] w-[100vw]"
         onWheel={onWheel}
