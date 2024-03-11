@@ -3,7 +3,7 @@
 import { memo } from "react";
 
 import { Camera, Color } from "@/types/canvas";
-import { useSelf } from "@/liveblocks.config";
+import { useMutation, useSelf } from "@/liveblocks.config";
 import { useSelectionBounds } from "@/hooks/use-selection-bounds";
 import { ColorPicker } from "./color-picker";
 
@@ -17,6 +17,18 @@ export const SelectionTools = memo(
     const selection = useSelf((me) => me.presence.selection);
 
     const selectionBounds = useSelectionBounds();
+
+    const setFill = useMutation((
+      {storage},
+      fill: Color
+    ) => {
+      const liveLayers = storage.get("layers");
+      setLastUsedColor(fill);
+
+      selection.forEach((id) => {
+        liveLayers.get(id)?.set("fill", fill );
+      })
+    }, [selection, setLastUsedColor])
 
     if (!selectionBounds) {
       return null;
@@ -36,7 +48,7 @@ export const SelectionTools = memo(
           )`,
         }}
       >
-        <ColorPicker onChange={() => {}} />
+        <ColorPicker onChange={setFill} />
       </div>
     );
   }
