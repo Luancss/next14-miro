@@ -28,6 +28,7 @@ import { CursorsPresence } from "./cursors-presence";
 import {
   connectionIdToColor,
   findIntersectingLayersWithRectangle,
+  penPointsToPathLayer,
   pointerEventToCanvasPoint,
   resizeBounds,
 } from "@/lib/utils";
@@ -136,18 +137,19 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         mode: CanvasMode.SelectionNet,
         origin,
         current,
-      })
+      });
 
       const ids = findIntersectingLayersWithRectangle(
         layerIds,
         layers,
         origin,
-        current,
-      )
-    
+        current
+      );
 
-    setMyPresence({selection: ids});
-}, [layerIds]);
+      setMyPresence({ selection: ids });
+    },
+    [layerIds]
+  );
 
   const startMultiSelection = useCallback((current: Point, origin: Point) => {
     if (Math.abs(current.x - origin.x) + Math.abs(current.y - origin.y) > 5) {
@@ -155,62 +157,66 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     }
   }, []);
 
-  const continueDrawing = useMutation((
-    { self, setMyPresence },
-    point: Point,
-    e: React.PointerEvent
-  ) => {
-    const {pencilDraft} = self.presence;
+  const continueDrawing = useMutation(
+    ({ self, setMyPresence }, point: Point, e: React.PointerEvent) => {
+      const { pencilDraft } = self.presence;
 
-    if (
-      canvasState.mode !== CanvasMode.Pencil ||
-      e.button !== 1 ||
-      pencilDraft == null
-    ) {
-      return;
-    }
+      if (
+        canvasState.mode !== CanvasMode.Pencil ||
+        e.button !== 1 ||
+        pencilDraft == null
+      ) {
+        return;
+      }
 
-    setMyPresence({
-      cursor: point,
-      pencilDraft:
-        
-      pencilDraft.length === 1 && 
-      pencilDraft[0][0] === point.x &&
-      pencilDraft[0][1] === point.y
-        ? pencilDraft
-        : [...pencilDraft, [point.x, point.y, e.pressure]],
-    })
-  }, [canvasState.mode]);
+      setMyPresence({
+        cursor: point,
+        pencilDraft:
+          pencilDraft.length === 1 &&
+          pencilDraft[0][0] === point.x &&
+          pencilDraft[0][1] === point.y
+            ? pencilDraft
+            : [...pencilDraft, [point.x, point.y, e.pressure]],
+      });
+    },
+    [canvasState.mode]
+  );
 
-  const insertPath = useMutation((
-    {storage, self, setMyPresence}
-  ) => {
+  const insertPath = useMutation(({ storage, self, setMyPresence }) => {
     const liveLayers = storage.get("layers");
-    const {pencilDraft} = self.presence;
+    const { pencilDraft } = self.presence;
 
     if (
       pencilDraft == null ||
       pencilDraft.length < 2 ||
-      liveLayers.size>= MAX_LAYERS
+      liveLayers.size >= MAX_LAYERS
     ) {
-      setMyPresence({pencilDraft: null});
+      setMyPresence({ pencilDraft: null });
       return;
     }
 
     const id = nanoid();
-    
-  }, [])
+    liveLayers.set(
+      id,
+      new LiveObject(penPointsToPathLayer(pencilDraft, lastUsedColor))
+    );
 
-  const startDrawing = useMutation((
-    {setMyPresence },
-    point: Point,
-    pressure: number
-  ) => {
-    setMyPresence({
-      pencilDraft: [[point.x, point.y, pressure]],
-      penColor: lastUsedColor,
-    })
-  }, [lastUsedColor])
+    const liveLayersIds = storage.get("layerIds");
+    liveLayersIds.push(id);
+
+    setMyPresence({ pencilDraft: null });
+    setCanvasState({ mode: CanvasMode.Pencil });
+  }, [lastUsedColor]);
+
+  const startDrawing = useMutation(
+    ({ setMyPresence }, point: Point, pressure: number) => {
+      setMyPresence({
+        pencilDraft: [[point.x, point.y, pressure]],
+        penColor: lastUsedColor,
+      });
+    },
+    [lastUsedColor]
+  );
 
   const resizeSelectedLayer = useMutation(
     ({ storage, self }, point: Point) => {
@@ -268,14 +274,22 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       } else if (canvasState.mode === CanvasMode.Resizing) {
         resizeSelectedLayer(current);
       } else if (canvasState.mode === CanvasMode.Pencil) {
-        continueDrawing(current, e)
+        continueDrawing(current, e);
       }
 
       setMyPresence({
         cursor: current,
       });
     },
-    [continueDrawing, camera, canvasState, resizeSelectedLayer, translateSelectedLayer, startMultiSelection, updateSelectionNet]
+    [
+      continueDrawing,
+      camera,
+      canvasState,
+      resizeSelectedLayer,
+      translateSelectedLayer,
+      startMultiSelection,
+      updateSelectionNet,
+    ]
   );
 
   const onPointerLeave = useMutation(({ setMyPresence }) => {
@@ -293,9 +307,9 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       }
 
       if (canvasState.mode === CanvasMode.Pencil) {
-        startDrawing(point, e.pressure)
-        
-        return
+        startDrawing(point, e.pressure);
+
+        return;
       }
 
       setCanvasState({
@@ -328,7 +342,15 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
       history.resume();
     },
-    [setCanvasState, camera, canvasState, history, insertLayer, unselectLayers, insertPath]
+    [
+      setCanvasState,
+      camera,
+      canvasState,
+      history,
+      insertLayer,
+      unselectLayers,
+      insertPath,
+    ]
   );
 
   const selections = useOthersMapped((other) => other.presence.selection);
@@ -404,15 +426,16 @@ export const Canvas = ({ boardId }: CanvasProps) => {
             />
           ))}
           <SelectionBox onResizeHandlePointerDown={onResizeHandlePointerDown} />
-          {canvasState.mode === CanvasMode.SelectionNet && canvasState.current != null && (
-            <rect
-              className="fill-blue-500/5 stroke-blue-500 stroke-1"
-              x={Math.min(canvasState.origin.x, canvasState.current.x)}
-              y={Math.min(canvasState.origin.y, canvasState.current.y)}
-              width={Math.abs(canvasState.origin.x - canvasState.current.x)}
-              height={Math.abs(canvasState.origin.y - canvasState.current.y)}
-            />
-          )}
+          {canvasState.mode === CanvasMode.SelectionNet &&
+            canvasState.current != null && (
+              <rect
+                className="fill-blue-500/5 stroke-blue-500 stroke-1"
+                x={Math.min(canvasState.origin.x, canvasState.current.x)}
+                y={Math.min(canvasState.origin.y, canvasState.current.y)}
+                width={Math.abs(canvasState.origin.x - canvasState.current.x)}
+                height={Math.abs(canvasState.origin.y - canvasState.current.y)}
+              />
+            )}
           <CursorsPresence />
         </g>
       </svg>
