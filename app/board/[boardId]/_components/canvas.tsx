@@ -46,6 +46,7 @@ import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTools } from "./selection-tools";
 import { CursorsPresence } from "./cursors-presence";
+import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
 
 const MAX_LAYERS = 100;
 
@@ -69,6 +70,8 @@ export const Canvas = ({
     b: 0,
   });
 
+  useDisableScrollBounce();
+  
   const history = useHistory();
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
@@ -426,9 +429,8 @@ export const Canvas = ({
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       switch (e.key) {
-        // case "Backspace":
-        //   deleteLayers();
-        //   break;
+        case "Delete":
+          deleteLayers();
         case "z": {
           if (e.ctrlKey || e.metaKey) {
             if (e.shiftKey) {
