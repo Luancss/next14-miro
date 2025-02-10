@@ -1,4 +1,4 @@
-# Real-Time Miro Clone With Nextjs, React, Tailwind and ShadcnUI 
+# Real-Time Miro Clone With Nextjs, React, Tailwind and ShadcnUI 🌐
 
 ### Desktop (screenshot):
 
